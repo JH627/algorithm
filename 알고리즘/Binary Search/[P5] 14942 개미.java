@@ -22,29 +22,28 @@ public class BOJ_14942_개미 {
 	static int roomCount, antCount;
 	static int[] antPower, nearRoom;
 	static ArrayList<ArrayList<Edge>> edges;
+	static ArrayList<Edge> distanceList;
 
 	public static void main(String[] args) throws IOException {
 		init();
-		ArrayList<Edge> distanceList = new ArrayList<>();
-		distanceList.add(new Edge(1, 0));
-		findNearestRoom(1, distanceList);
+		findNearestRoom(1);
 		printAnswer();
 	}
 
-	static void findNearestRoom(int roomNumber, ArrayList<Edge> distanceList) {
-		nearRoom[roomNumber] = getNearestRoom(distanceList, roomNumber);
+	static void findNearestRoom(int roomNumber) {
+		nearRoom[roomNumber] = getNearestRoom(roomNumber);
 
 		for (Edge edge : edges.get(roomNumber)) {
 			if (nearRoom[edge.end] != 0) {
 				continue;
 			}
-			ArrayList<Edge> newDistanceList = (ArrayList<Edge>)distanceList.clone();
-			newDistanceList.add(new Edge(edge.end, newDistanceList.get(newDistanceList.size() - 1).cost + edge.cost));
-			findNearestRoom(edge.end, newDistanceList);
+			distanceList.add(new Edge(edge.end, distanceList.get(distanceList.size() - 1).cost + edge.cost));
+			findNearestRoom(edge.end);
+			distanceList.remove(distanceList.size() - 1);
 		}
 	}
 
-	static int getNearestRoom(ArrayList<Edge> distanceList, int roomNumber) {
+	static int getNearestRoom(int roomNumber) {
 		int power = distanceList.get(distanceList.size() - 1).cost - antPower[roomNumber];
 
 		if (power <= 0) {
@@ -97,5 +96,8 @@ public class BOJ_14942_개미 {
 		}
 
 		nearRoom = new int[roomCount + 1];
+
+		distanceList = new ArrayList<>();
+		distanceList.add(new Edge(1, 0));
 	}
 }
